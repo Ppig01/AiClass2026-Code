@@ -59,7 +59,7 @@ def main():
     
     # 训练模型
     print('\n======== 训练模型')
-    writer = SummaryWriter(f'runs/{run_name}')
+    writer = SummaryWriter(f'1-3/runs/{run_name}')
     for epoch in range(num_epochs):
         model.train()
         
