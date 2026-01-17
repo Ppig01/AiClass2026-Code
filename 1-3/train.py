@@ -48,64 +48,8 @@ def main():
     print(X_train.shape)
     print(y_train.shape)
     
-    # 构建 DataLoader
-    train_dataset = TensorDataset(X_train, y_train)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    # TODO: 开始你的表演，请不要直接复制代码！
     
-    # 定义模型、损失函数和优化器
-    model = SimpleMLP(input_dim=X_train.shape[1], hidden_num=hidden_num, hidden_dim=hidden_dim, output_dim=1)
-    optimizer = optim.Adam(model.parameters(), lr=lr)
-    loss = nn.BCELoss()
-    
-    # 训练模型
-    print('\n======== 训练模型')
-    writer = SummaryWriter(f'1-3/runs/{run_name}')
-    for epoch in range(num_epochs):
-        model.train()
-        
-        # 每个 epoch 的损失
-        epoch_loss = 0
-        
-        # 预测正确的个数
-        correct_num = 0
-        step = 0
-        for X_batch, y_batch in train_loader:
-            y_pred = model(X_batch)
-            
-            # 计算预测正确的个数，阈值为0.5
-            correct_num += torch.sum((y_pred > 0.5) == y_batch).item()
-            
-            l = loss(y_pred, y_batch)
-            epoch_loss += l.item()
-
-            optimizer.zero_grad()
-            l.backward()
-            optimizer.step()
-
-            step += 1
-        
-        # 计算验证集的 accuracy
-        model.eval()
-        with torch.no_grad():
-            y_val_pred = model(X_val)
-            val_correct_num = torch.sum((y_val_pred > 0.5) == y_val).item()
-            val_accuracy = val_correct_num / n_val
-        model.train()
-        
-        train_accuracy = correct_num / n_train
-        print(f'Epoch: {epoch}, Train Loss: {epoch_loss:.4f}, Train Acc: {train_accuracy:.4f}, Val Acc: {val_accuracy:.4f}')
-        writer.add_scalar('train/accuracy', train_accuracy, epoch)
-        writer.add_scalar('train/loss', epoch_loss, epoch)
-        writer.add_scalar('val/accuracy', val_accuracy, epoch)
-    
-    # 预测测试集
-    print('\n======== 预测测试集')
-    # 设置为评估模式
-    model.eval()
-    y_pred = model(X_test)
-    
-    # 计算预测结果，阈值为0.5，转换为 bool 类型
-    y_pred = (y_pred > 0.5).reshape(-1).cpu().numpy().astype(bool)
     
     # 保存到 CSV 文件
     sub = pd.DataFrame({'PassengerId': df_test['PassengerId'], 'Transported': y_pred})
